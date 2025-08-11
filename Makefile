@@ -64,6 +64,11 @@ docker-build:
 	@echo "Building Docker image..."
 	docker build -t chat-app .
 
+# Test Docker build
+docker-test:
+	@echo "Testing Docker build..."
+	chmod +x build-test.sh && ./build-test.sh
+
 # Run with Docker Compose
 docker-run:
 	@echo "Starting services with Docker Compose..."

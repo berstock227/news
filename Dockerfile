@@ -2,16 +2,16 @@
 FROM golang:1.21-alpine AS builder
 
 # Install git and ca-certificates
-RUN apk add --no-cache git ca-certificates
+RUN apk update && apk add --no-cache git ca-certificates
 
 # Set working directory
 WORKDIR /app
 
 # Copy go mod files
-COPY go.mod go.sum ./
+COPY go.mod ./
 
-# Download dependencies
-RUN go mod download
+# Download dependencies and generate go.sum
+RUN go mod download && go mod tidy
 
 # Copy source code
 COPY . .
@@ -23,7 +23,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/server
 FROM alpine:latest
 
 # Install ca-certificates for HTTPS requests
-RUN apk --no-cache add ca-certificates
+RUN apk update && apk --no-cache add ca-certificates
 
 # Create non-root user
 RUN addgroup -g 1001 -S appgroup && \
