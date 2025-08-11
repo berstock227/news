@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "chat-app/proto";
+
+// Chat service definition
+service ChatService {
+  // Send a message
+  rpc SendMessage(Message) returns (MessageResponse);
+  
+  // Get message history
+  rpc GetMessageHistory(HistoryRequest) returns (HistoryResponse);
+  
+  // Join a room
+  rpc JoinRoom(RoomRequest) returns (RoomResponse);
+  
+  // Leave a room
+  rpc LeaveRoom(RoomRequest) returns (RoomResponse);
+  
+  // Get online users
+  rpc GetOnlineUsers(OnlineUsersRequest) returns (OnlineUsersResponse);
+  
+  // Stream messages for real-time updates
+  rpc StreamMessages(StreamRequest) returns (stream Message);
+}
+
+// Message structure
+message Message {
+  string id = 1;
+  string user_id = 2;
+  string username = 3;
+  string room_id = 4;
+  string content = 5;
+  string message_type = 6; // text, image, file
+  int64 timestamp = 7;
+  map<string, string> metadata = 8;
+}
+
+// Message response
+message MessageResponse {
+  bool success = 1;
+  string message_id = 2;
+  string error = 3;
+}
+
+// History request
+message HistoryRequest {
+  string room_id = 1;
+  int32 limit = 2;
+  int64 before_timestamp = 3;
+}
+
+// History response
+message HistoryResponse {
+  repeated Message messages = 1;
+  bool has_more = 2;
+}
+
+// Room request
+message RoomRequest {
+  string room_id = 1;
+  string user_id = 2;
+}
+
+// Room response
+message RoomResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+// Online users request
+message OnlineUsersRequest {
+  string room_id = 1;
+}
+
+// Online users response
+message OnlineUsersResponse {
+  repeated User users = 1;
+}
+
+// User structure
+message User {
+  string id = 1;
+  string username = 2;
+  string status = 3; // online, offline, away
+  int64 last_seen = 4;
+}
+
+// Stream request
+message StreamRequest {
+  string room_id = 1;
+  string user_id = 2;
+}
